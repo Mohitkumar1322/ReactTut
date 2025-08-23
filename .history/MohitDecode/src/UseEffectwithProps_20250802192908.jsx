@@ -1,0 +1,26 @@
+
+import  { useState } from 'react';
+import CountForProps from './CountForProps';
+
+
+function UseEffectwithProps(){
+    const [count, setCount] = useState(0);
+    const [data , setData] = useState(0);
+
+    return (
+        <div>
+            <h1>Parent Props</h1>
+            <button onClick={() => setCount(count + 1)}>
+                Increment Count: {CountForProps+1}
+            </button>
+
+            <br></br>
+
+            <button onClick={() => setData(data + 1)}>
+                Update Data: {data}
+            </button>
+        </div>
+    )
+}
+
+export default UseEffectwithProps;
