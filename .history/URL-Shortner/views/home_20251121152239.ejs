@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>URL Shortener</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f0f0f0; color:#333; margin:0; padding:20px; display:flex; flex-direction:column; align-items:center; min-height:100vh; }
+    h1 { color:#1a73e8; margin-bottom:12px; }
+    .card { background:white; padding:16px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); width:820px; max-width:95%; }
+    form { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
+    input[type="text"] { padding:10px; font-size:16px; border:1px solid #ccc; border-radius:6px; flex:1; }
+    button { padding:10px 16px; font-size:16px; background-color:#1a73e8; color:white; border:none; border-radius:6px; cursor:pointer; }
+    .created { margin-bottom:12px; padding:10px; border-radius:6px; background:#e8f0fe; display:flex; gap:12px; align-items:center; justify-content:space-between; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { padding:10px; text-align:left; border-bottom:1px solid #ddd; vertical-align:middle; }
+    th { background-color:#1a73e8; color:white; }
+    tr:nth-child(even) { background-color:#f2f2f2; }
+    .small { font-size:13px; color:#555; }
+  </style>
+</head>
+<body>
+  <h1>URL Shortener</h1>
+
+  <div class="card">
+    <form method="POST" action="/url">
+      <label for="urlInput" class="small">Enter Your URL:</label>
+      <input type="text" id="urlInput" name="url" placeholder="https://example.com" required />
+      <button type="submit">Generate</button>
+      <button type="button" onclick="window.location.href='/test'">View Stats</button>
+    </form>
+
+    <% /* Safe check for created */ %>
+    <% if (typeof created !== 'undefined' && created) { %>
+      <div class="created">
+        <div>
+          <strong>New short URL created:</strong>
+          <a href="http://<%= (typeof host !== 'undefined' && host) ? host : 'localhost:8001' %>/url/<%= created %>" target="_blank">
+            http://<%= (typeof host !== 'undefined' && host) ? host : 'localhost:8001' %>/url/<%= created %>
+          </a>
+          <span class="small"> (click to open)</span>
+        </div>
+        <div>
+          <button type="button" onclick="navigator.clipboard.writeText('http://<%= (typeof host !== 'undefined' && host) ? host : 'localhost:8001' %>/url/<%= created %>')">Copy</button>
+        </div>
+      </div>
+    <% } %>
+
+    <% /* Safe check for urls */ %>
+    <% if (typeof urls !== 'undefined' && Array.isArray(urls) && urls.length) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>S.no</th>
+            <th>Short Id</th>
+            <th>Redirect</th>
+            <th>Clicks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% urls.forEach((url, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><a href="/url/<%= url.shortId %>"><%= url.shortId %></a></td>
+              <td><%= url.redirectURL %></td>
+              <td><%= (url.visitHistory && url.visitHistory.length) || 0 %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p>No URLs saved yet.</p>
+    <% } %>
+  </div>
+</body>
+</html>

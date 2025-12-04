@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>TinyLink · <%= link.code %> · Stats</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>TinyLink</h1>
+      <div class="muted">Link stats</div>
+    </div>
+    <div class="host small">Host: <%= host || 'localhost:8001' %></div>
+  </header>
+
+  <main class="container">
+    <section class="card stats-card">
+      <h2 class="mono"><%= link.code %></h2>
+
+      <p><strong>Target:</strong>
+        <a href="<%= link.target %>" target="_blank" rel="noopener noreferrer"><%= link.target %></a>
+        <button class="btn tiny" id="copyStat" data-copy="http://<%= host || 'localhost:8001' %>/ <%= link.code %>">Copy link</button>
+      </p>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-number"><%= link.clicks %></div>
+          <div class="stat-label">Total clicks</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number"><%= link.lastClicked ? new Date(link.lastClicked).toLocaleString() : '-' %></div>
+          <div class="stat-label">Last clicked</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number"><%= link.createdAt ? new Date(link.createdAt).toLocaleString() : '-' %></div>
+          <div class="stat-label">Created at</div>
+        </div>
+      </div>
+
+      <div class="mt">
+        <a href="/"><button class="btn ghost">Back to dashboard</button></a>
+      </div>
+    </section>
+  </main>
+
+  <div id="toasts" aria-live="polite"></div>
+  <script>
+    window.__TINYLINK = { host: "<%= host || 'localhost:8001' %>" };
+  </script>
+  <script src="/js/app.js" defer></script>
+</body>
+</html>

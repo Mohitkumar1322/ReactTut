@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>TinyLink - Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; max-width:1000px; margin: auto; }
+    header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    input, button { padding:8px; font-size:14px; }
+    table { width:100%; border-collapse:collapse; margin-top:12px; }
+    th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
+    th { background:#1a73e8; color:#fff; }
+    .small { font-size:12px; color:#666; }
+    .actions { display:flex; gap:8px; }
+    .delete-btn { background:#e53935; color:white; border:none; padding:6px 8px; border-radius:4px; cursor:pointer; }
+    .primary { background:#1a73e8; color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; }
+    .muted { color:#888; font-size:13px; }
+    .error { color:#b00020; margin-top:8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TinyLink</h1>
+    <div class="small">Host: <%= host || 'localhost:8001' %></div>
+  </header>
+
+  <section>
+    <form method="POST" action="/create" style="display:flex; gap:8px; align-items:center;">
+      <input type="text" name="target" placeholder="https://example.com/long/path" style="flex:1;" required />
+      <input type="text" name="code" placeholder="optional custom code (6-8 alnum)" />
+      <button class="primary" type="submit">Create</button>
+      <a href="/test"><button type="button">View Stats</button></a>
+    </form>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+
+    <% if (urls && urls.length) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Code</th>
+            <th>Target</th>
+            <th>Clicks</th>
+            <th>Last Clicked</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% urls.forEach((u, idx) => { %>
+            <tr>
+              <td><%= idx + 1 %></td>
+              <td><a href="/<%= u.code %>"><%= u.code %></a></td>
+              <td style="max-width:400px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                <a href="<%= u.target %>" target="_blank" rel="noopener noreferrer"><%= u.target %></a>
+              </td>
+              <td><%= u.clicks %></td>
+              <td><%= u.lastClicked ? new Date(u.lastClicked).toLocaleString() : '-' %></td>
+              <td>
+                <div class="actions">
+                  <form method="POST" action="/delete" onsubmit="return confirm('Delete <%= u.code %>?');">
+                    <input type="hidden" name="code" value="<%= u.code %>" />
+                    <button class="delete-btn" type="submit">Delete</button>
+                  </form>
+                  <a href="/code/<%= u.code %>"><button type="button">Stats</button></a>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p class="muted">No links yet. Add one above.</p>
+    <% } %>
+  </section>
+</body>
+</html>

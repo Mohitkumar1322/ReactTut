@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>TinyLink - <%= link.code %> stats</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; padding:16px; max-width:800px; margin:auto; }
+    header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .card { background:#fff; padding:16px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.06); }
+    table { width:100%; }
+    .small { font-size:13px; color:#666; }
+    .back { margin-top:12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Stats for <%= link.code %></h1>
+    <div class="small">Host: <%= host || 'localhost:8001' %></div>
+  </header>
+
+  <div class="card">
+    <p><strong>Target:</strong> <a href="<%= link.target %>" target="_blank" rel="noopener noreferrer"><%= link.target %></a></p>
+    <p><strong>Total Clicks:</strong> <%= link.clicks %></p>
+    <p><strong>Last Clicked:</strong> <%= link.lastClicked ? new Date(link.lastClicked).toLocaleString() : '-' %></p>
+    <p><strong>Created:</strong> <%= link.createdAt ? new Date(link.createdAt).toLocaleString() : '-' %></p>
+
+    <div class="back">
+      <a href="/"><button type="button">Back to dashboard</button></a>
+    </div>
+  </div>
+</body>
+</html>

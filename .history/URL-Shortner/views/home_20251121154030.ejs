@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TinyLink · Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>TinyLink</h1>
+      <div class="muted">Simple & fast URL shortener</div>
+    </div>
+    <div class="host small">Host: <%= host || 'localhost:8001' %></div>
+  </header>
+
+  <main class="container">
+    <section class="card form-card">
+      <form id="createForm" method="POST" action="/create" class="flex" novalidate>
+        <div class="form-left">
+          <label class="label">Long URL</label>
+          <input id="targetInput" name="target" type="url" placeholder="https://example.com/very/long/path" required />
+          <div class="hint small muted">Protocol optional — we'll add <code>https://</code> if missing.</div>
+        </div>
+
+        <div class="form-middle">
+          <label class="label">Custom code (optional)</label>
+          <input id="codeInput" name="code" type="text" placeholder="6-8 letters or numbers" pattern="[A-Za-z0-9]{6,8}" />
+          <div class="hint small muted">6–8 chars, letters & numbers only.</div>
+        </div>
+
+        <div class="form-actions">
+          <button id="createBtn" class="btn primary" type="submit">
+            <span class="btn-text">Create</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn ghost" onclick="location.href='/test'">View Stats</button>
+        </div>
+      </form>
+      <div id="formError" class="error" aria-live="polite" hidden></div>
+    </section>
+
+    <section class="card controls">
+      <div class="controls-left">
+        <input id="searchInput" type="search" placeholder="Search by code or URL" />
+      </div>
+      <div class="controls-right">
+        <button id="sortBtn" class="btn small">Sort by clicks ↓</button>
+      </div>
+    </section>
+
+    <section class="card table-card" id="tableCard">
+      <table id="linksTable" class="links-table" aria-describedby="tableDesc">
+        <caption id="tableDesc" class="visually-hidden">List of shortened links</caption>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Code</th>
+            <th>Target</th>
+            <th>Clicks</th>
+            <th>Last clicked</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        <% if (urls && urls.length) { %>
+          <% urls.forEach((u, idx) => { %>
+            <tr id="row-<%= u.code %>" class="<%= (typeof created !== 'undefined' && created === u.code) ? 'new-row' : '' %>">
+              <td class="sn"><%= idx + 1 %></td>
+              <td class="mono code-cell"><a class="link" href="/<%= u.code %>"><%= u.code %></a></td>
+
+              <td class="target-cell" title="<%= u.target %>">
+                <a href="<%= u.target %>" target="_blank" rel="noopener noreferrer" class="truncate"><%= u.target %></a>
+              </td>
+
+              <td class="clicks"><%= u.clicks %></td>
+              <td class="small"><%= u.lastClicked ? new Date(u.lastClicked).toLocaleString() : '-' %></td>
+
+              <td>
+                <div class="actions">
+                  <button class="btn tiny" data-copy="http://<%= host || 'localhost:8001' %>/ <%= u.code %>" data-code="<%= u.code %>">Copy</button>
+                  <a class="btn tiny" href="/code/<%= u.code %>">Stats</a>
+
+                  <!-- Delete triggers modal -->
+                  <button class="btn tiny danger delete-btn" data-code="<%= u.code %>" aria-label="Delete <%= u.code %>">Delete</button>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr><td colspan="6" class="muted">No links yet — create one above.</td></tr>
+        <% } %>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Modal delete -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Delete link</h3>
+      <p id="modalBody">Are you sure you want to delete <span id="modalCode" class="mono"></span> ?</p>
+      <div class="modal-actions">
+        <button id="modalCancel" class="btn ghost" data-close>Cancel</button>
+        <button id="modalConfirm" class="btn danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toasts" aria-live="polite"></div>
+
+  <script>
+    // pass created code to client JS
+    window.__TINYLINK = {
+      created: "<%= typeof created !== 'undefined' && created ? created : '' %>",
+      host: "<%= host || 'localhost:8001' %>"
+    };
+  </script>
+  <script src="/js/app.js" defer></script>
+</body>
+</html>

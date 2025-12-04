@@ -1,0 +1,21 @@
+html,body{
+  height: 100%;
+  width: 100%;
+  color:#fff;
+}
+
+body{
+  background-color: black;
+}
+.card{
+  width: 300px;
+  border: 1px solid white;
+  padding: 20px;
+  text-align: center;
+
+}
+.parent{
+  padding: 20px;
+  
+
+}

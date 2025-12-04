@@ -1,0 +1,13 @@
+html,body{
+  height: 100%;
+  width: 100%;
+  color:
+}
+
+body{
+  background-color: black;
+}
+.card{
+  width: 200px;
+  border: 1px solid white;
+}
